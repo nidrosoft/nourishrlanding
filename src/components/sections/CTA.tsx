@@ -4,14 +4,13 @@ import { motion, useInView } from "framer-motion";
 import { Apple, ArrowRight, Lock, Mail, Sparkles, Check } from "lucide-react";
 import { useRef, useState } from "react";
 import { MagneticButton } from "../ui/MagneticButton";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 const floatingEmojis = [
   { emoji: "🍕", x: 5, y: 20 },
   { emoji: "🥗", x: 90, y: 15 },
   { emoji: "🍜", x: 85, y: 75 },
   { emoji: "🌮", x: 10, y: 80 },
-  { emoji: "🍣", x: 95, y: 50 },
-  { emoji: "🥑", x: 3, y: 50 },
 ];
 
 export function CTA() {
@@ -20,6 +19,7 @@ export function CTA() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,55 +34,33 @@ export function CTA() {
       ref={ref}
       className="py-24 md:py-40 relative overflow-hidden"
     >
-      {/* Animated gradient background */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{
-          background: [
-            "linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #059669 100%)",
-            "linear-gradient(135deg, #059669 0%, #10b981 50%, #14b8a6 100%)",
-            "linear-gradient(135deg, #14b8a6 0%, #059669 50%, #10b981 100%)",
-            "linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #059669 100%)",
-          ],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-      />
+      {/* Static gradient background - no animation for mobile performance */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600" />
 
-      {/* Animated mesh gradient overlay */}
-      <div className="absolute inset-0 opacity-30">
-        <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, 50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      {/* Static mesh gradient overlay - no animation on mobile */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none hidden md:block">
+        <div
+          className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          style={{ transform: 'translateZ(0)' }}
         />
-        <motion.div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, -50, 0],
-            scale: [1.2, 1, 1.2],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        <div
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          style={{ transform: 'translateZ(0)' }}
         />
       </div>
 
-      {/* Floating food emojis */}
-      {floatingEmojis.map((item, i) => (
+      {/* Floating food emojis - hidden on mobile for performance */}
+      {!isMobile && floatingEmojis.map((item, i) => (
         <motion.div
           key={i}
-          className="absolute text-4xl md:text-5xl pointer-events-none select-none opacity-20"
-          style={{ left: `${item.x}%`, top: `${item.y}%` }}
+          className="absolute text-4xl md:text-5xl pointer-events-none select-none opacity-20 hidden md:block"
+          style={{ left: `${item.x}%`, top: `${item.y}%`, transform: 'translateZ(0)' }}
           animate={{
-            y: [0, -20, 0],
-            rotate: [0, 10, -10, 0],
-            scale: [1, 1.1, 1],
+            y: [0, -15, 0],
+            rotate: [0, 5, -5, 0],
           }}
           transition={{
-            duration: 5 + i,
+            duration: 6 + i,
             repeat: Infinity,
             delay: i * 0.5,
             ease: "easeInOut",

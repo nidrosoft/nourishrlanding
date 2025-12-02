@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useEffect, useState } from "react";
 
 interface GlowingCardProps {
   children: ReactNode;
@@ -18,9 +18,14 @@ export function GlowingCard({
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
@@ -28,13 +33,22 @@ export function GlowingCard({
 
   const background = useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, ${glowColor}, transparent 80%)`;
 
+  // Simplified version for mobile - no mouse tracking
+  if (isMobile) {
+    return (
+      <div className={cn("relative group", className)}>
+        <div className="relative">{children}</div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       className={cn("relative group", className)}
     >
-      {/* Glow effect */}
+      {/* Glow effect - desktop only */}
       <motion.div
         className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{ background }}
@@ -56,22 +70,36 @@ export function TiltCard({ children, className }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const percentX = (e.clientX - centerX) / (rect.width / 2);
     const percentY = (e.clientY - centerY) / (rect.height / 2);
-    rotateY.set(percentX * 10);
-    rotateX.set(-percentY * 10);
+    rotateY.set(percentX * 8);
+    rotateX.set(-percentY * 8);
   };
 
   const handleMouseLeave = () => {
     rotateX.set(0);
     rotateY.set(0);
   };
+
+  // Simplified version for mobile - no tilt effect
+  if (isMobile) {
+    return (
+      <div className={cn("relative", className)}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div

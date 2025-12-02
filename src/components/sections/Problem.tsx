@@ -1,20 +1,15 @@
 "use client";
 
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { AnimatedCounter } from "../ui/AnimatedCounter";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 export function Problem() {
   const ref = useRef(null);
   const containerRef = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const isMobile = useIsMobile();
 
   const painPoints = [
     { emoji: "😩", text: '"I don\'t know what I want to eat"', delay: 0 },
@@ -35,43 +30,28 @@ export function Problem() {
       ref={containerRef}
       className="py-20 md:py-32 bg-gray-900 text-white relative overflow-hidden"
     >
-      {/* Animated background gradient */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ y: backgroundY }}
-      >
+      {/* Static background gradient - optimized for mobile */}
+      <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900" />
-        <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
+        <div 
+          className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
-        <motion.div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.5, 0.3, 0.5],
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-      </motion.div>
-
-      {/* Animated grid pattern */}
-      <div className="absolute inset-0 opacity-[0.03]">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }}
-          animate={{ backgroundPosition: ["0px 0px", "50px 50px"] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        <div 
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
       </div>
+
+      {/* Static grid pattern - no animation for mobile performance */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] hidden md:block"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+          backgroundSize: "50px 50px",
+        }}
+      />
 
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}

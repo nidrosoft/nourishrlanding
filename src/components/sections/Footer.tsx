@@ -42,17 +42,15 @@ export function Footer() {
 
   return (
     <footer ref={ref} className="bg-gray-900 text-white pt-20 pb-8 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
+      {/* Background decoration - static for performance */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <div
+          className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
-          transition={{ duration: 10, repeat: Infinity }}
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
       </div>
 

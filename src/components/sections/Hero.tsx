@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { MagneticButton } from "../ui/MagneticButton";
 import { AnimatedCounter } from "../ui/AnimatedCounter";
 import { GradientText } from "../ui/TextReveal";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 const moods = [
   { emoji: "😴", label: "Lazy", color: "from-purple-400 to-indigo-500" },
@@ -21,25 +22,23 @@ const floatingFoods = [
   { emoji: "🥗", x: 85, y: 15, delay: 0.5 },
   { emoji: "🍜", x: 75, y: 70, delay: 1 },
   { emoji: "🌮", x: 15, y: 75, delay: 1.5 },
-  { emoji: "🍣", x: 90, y: 45, delay: 2 },
-  { emoji: "🥑", x: 5, y: 50, delay: 2.5 },
-  { emoji: "🍔", x: 80, y: 85, delay: 3 },
-  { emoji: "🧁", x: 20, y: 90, delay: 3.5 },
 ];
 
 export function Hero() {
   const containerRef = useRef(null);
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  // Disable parallax on mobile for performance
+  const y = useTransform(scrollYProgress, [0, 1], [0, isMobile ? 0 : 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, isMobile ? 1 : 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile ? 1 : 0.95]);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -50,57 +49,35 @@ export function Hero() {
       ref={containerRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      {/* Animated gradient background */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
-          animate={{
-            background: [
-              "linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdfa 100%)",
-              "linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #ecfdf5 100%)",
-              "linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdfa 100%)",
-            ],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+      {/* Static gradient background - no animation for performance */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-teal-50" />
+
+      {/* Simplified blobs - CSS only, no JS animation on mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-300 rounded-full opacity-20 blur-3xl md:opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
+        <div 
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-300 rounded-full opacity-20 blur-3xl md:opacity-30"
+          style={{ transform: 'translateZ(0)' }}
+        />
+        {!isMobile && (
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-200 rounded-full blur-3xl opacity-20"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            style={{ transform: 'translateZ(0)' }}
+          />
+        )}
       </div>
 
-      {/* Animated blobs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{
-            x: [0, -30, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-
-      {/* Floating food emojis */}
-      {floatingFoods.map((food, i) => (
+      {/* Floating food emojis - hidden on mobile for performance */}
+      {!isMobile && floatingFoods.map((food, i) => (
         <motion.div
           key={i}
-          className="absolute text-4xl md:text-5xl pointer-events-none select-none"
-          style={{ left: `${food.x}%`, top: `${food.y}%` }}
+          className="absolute text-4xl md:text-5xl pointer-events-none select-none hidden md:block"
+          style={{ left: `${food.x}%`, top: `${food.y}%`, transform: 'translateZ(0)' }}
           initial={{ opacity: 0, scale: 0 }}
           animate={isLoaded ? {
             opacity: [0.15, 0.3, 0.15],

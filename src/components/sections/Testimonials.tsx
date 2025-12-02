@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { GlowingCard } from "../ui/GlowingCard";
 import { AnimatedCounter } from "../ui/AnimatedCounter";
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 const testimonials = [
   {
@@ -68,15 +69,16 @@ export function Testimonials() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const isMobile = useIsMobile();
 
-  // Auto-advance carousel
+  // Auto-advance carousel - slower on mobile
   useEffect(() => {
     if (!isAutoPlaying) return;
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, isMobile ? 6000 : 5000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, isMobile]);
 
   const nextTestimonial = () => {
     setIsAutoPlaying(false);
@@ -94,17 +96,15 @@ export function Testimonials() {
       ref={ref}
       className="py-20 md:py-32 bg-gradient-to-br from-emerald-50 via-white to-teal-50 relative overflow-hidden"
     >
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ scale: [1, 1.2, 1], x: [0, 30, 0] }}
-          transition={{ duration: 10, repeat: Infinity }}
+      {/* Background decorations - static on mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 rounded-full blur-3xl opacity-20 md:opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ scale: [1.2, 1, 1.2], y: [0, -30, 0] }}
-          transition={{ duration: 12, repeat: Infinity }}
+        <div 
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-200 rounded-full blur-3xl opacity-20 md:opacity-30"
+          style={{ transform: 'translateZ(0)' }}
         />
       </div>
 
