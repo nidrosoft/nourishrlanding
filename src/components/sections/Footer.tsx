@@ -3,25 +3,25 @@
 import { motion, useInView } from "framer-motion";
 import { Github, Instagram, Linkedin, Twitter, Heart, ArrowUp } from "lucide-react";
 import { useRef } from "react";
+import Link from "next/link";
 
 const footerLinks = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Pricing", href: "#" },
+    { label: "Features", href: "/#features" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Testimonials", href: "/#testimonials" },
     { label: "Download", href: "#" },
   ],
   Resources: [
-    { label: "Help Center", href: "#" },
-    { label: "Contact", href: "#" },
-    { label: "FAQ", href: "#" },
-    { label: "Support", href: "#" },
+    { label: "FAQ", href: "/faq" },
+    { label: "Contact", href: "/contact" },
+    { label: "Support", href: "/contact" },
   ],
   Legal: [
-    { label: "Terms of Service", href: "#" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "GDPR", href: "#" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Cookie Policy", href: "/cookies" },
+    { label: "GDPR", href: "/gdpr" },
   ],
 };
 
@@ -132,14 +132,13 @@ export function Footer() {
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: 0.3 + categoryIndex * 0.1 + index * 0.05 }}
                   >
-                    <motion.a
+                    <Link
                       href={link.href}
                       className="text-gray-400 hover:text-white transition-colors inline-flex items-center gap-1 group"
-                      whileHover={{ x: 5 }}
                     >
                       <span className="w-0 h-0.5 bg-emerald-500 group-hover:w-3 transition-all duration-300" />
                       {link.label}
-                    </motion.a>
+                    </Link>
                   </motion.li>
                 ))}
               </ul>

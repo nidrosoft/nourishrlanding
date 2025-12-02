@@ -4,10 +4,12 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { Menu, X, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MagneticButton } from "../ui/MagneticButton";
+import { WaitlistModal } from "../ui/WaitlistModal";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
 
   const { scrollY } = useScroll();
   const headerBackground = useTransform(
@@ -94,7 +96,10 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <MagneticButton className="px-5 py-2.5 text-sm bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50">
+            <MagneticButton 
+              className="px-5 py-2.5 text-sm bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+              onClick={() => setIsWaitlistOpen(true)}
+            >
               Join Waitlist
             </MagneticButton>
             <MagneticButton className="px-5 py-2.5 text-sm bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30">
@@ -167,7 +172,13 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <button className="w-full py-3 px-4 text-gray-700 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                  <button 
+                    className="w-full py-3 px-4 text-gray-700 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsWaitlistOpen(true);
+                    }}
+                  >
                     Join Waitlist
                   </button>
                   <button className="w-full py-3 px-4 text-white font-medium bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
@@ -180,6 +191,12 @@ export function Header() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Waitlist Modal */}
+      <WaitlistModal 
+        isOpen={isWaitlistOpen} 
+        onClose={() => setIsWaitlistOpen(false)} 
+      />
     </motion.header>
   );
 }
