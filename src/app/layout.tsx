@@ -8,7 +8,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Nourishr - Decide What to Eat in 5 Seconds, Not Hours",
+  metadataBase: new URL("https://nourishr.app"),
+  title: {
+    default: "Nourishr - Decide What to Eat in 5 Seconds, Not Hours",
+    template: "%s | Nourishr",
+  },
   description:
     "Nourishr uses AI to understand your cravings, dietary needs, and what's in your fridge to instantly recommend the perfect meal — whether you're cooking or ordering.",
   keywords: [
@@ -19,19 +23,52 @@ export const metadata: Metadata = {
     "recipe finder",
     "nutrition tracker",
     "dietary preferences app",
+    "food delivery",
+    "healthy eating",
+    "meal ideas",
   ],
+  authors: [{ name: "Cyriac Zeh", url: "https://www.linkedin.com/in/cyriac-zeh/" }],
+  creator: "Nourishr",
+  publisher: "Nourishr",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    title: "Nourishr - Your AI Meal Companion",
-    description:
-      "Decide what to eat in 5 seconds, not hours. AI-powered meal recommendations based on your mood, diet, and what's in your fridge.",
     type: "website",
+    locale: "en_US",
+    url: "https://nourishr.app",
+    siteName: "Nourishr",
+    title: "Nourishr - Decide What to Eat in 5 Seconds, Not Hours",
+    description:
+      "Your AI meal companion. Understand your cravings, dietary needs, and what's in your fridge to instantly recommend the perfect meal.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nourishr - Your AI Meal Companion",
+    title: "Nourishr - Decide What to Eat in 5 Seconds 🍕",
     description:
-      "Decide what to eat in 5 seconds, not hours. AI-powered meal recommendations.",
+      "Your AI meal companion. Get personalized meal recommendations based on your mood, diet, and what's in your fridge. Try it free!",
+    creator: "@nourishrapp",
+    site: "@nourishrapp",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
